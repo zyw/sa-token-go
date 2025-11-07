@@ -87,7 +87,7 @@ func NewStorageFromConfig(cfg *Config) (adapter.Storage, error) {
 }
 
 // NewStorageFromClient 从已有的Redis客户端创建存储
-func NewStorageFromClient(client *redis.Client) adapter.Storage {
+func NewStorageFromClient(client redis.UniversalClient) adapter.Storage {
 	return &Storage{
 		client:    client,
 		ctx:       context.Background(),
