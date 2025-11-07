@@ -3,6 +3,7 @@ package security
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -48,6 +49,14 @@ type RefreshTokenInfo struct {
 	Device       string // Device type | 设备类型
 	CreateTime   int64  // Creation timestamp | 创建时间戳
 	ExpireTime   int64  // Expiration timestamp | 过期时间戳
+}
+
+func (r *RefreshTokenInfo) MarshalBinary() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+func (r *RefreshTokenInfo) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, r)
 }
 
 // RefreshTokenManager Refresh token manager | 刷新令牌管理器

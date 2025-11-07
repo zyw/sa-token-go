@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 
 // Storage Redis存储实现
 type Storage struct {
-	client    *redis.Client
+	client    redis.UniversalClient
 	ctx       context.Context
 	opTimeout time.Duration
 }
@@ -111,7 +112,7 @@ func (s *Storage) Get(key string) (any, error) {
 	ctx, cancel := s.withTimeout()
 	defer cancel()
 	val, err := s.client.Get(ctx, s.getKey(key)).Result()
-	if err == redis.Nil {
+	if errors.Is(err, redis.Nil) {
 		return nil, fmt.Errorf("key not found: %s", key)
 	}
 	if err != nil {
@@ -225,7 +226,7 @@ func (s *Storage) Close() error {
 }
 
 // GetClient 获取Redis客户端（用于高级操作）
-func (s *Storage) GetClient() *redis.Client {
+func (s *Storage) GetClient() redis.UniversalClient {
 	return s.client
 }
 
