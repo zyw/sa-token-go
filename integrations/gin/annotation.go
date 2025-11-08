@@ -18,7 +18,7 @@ const (
 	TagSaIgnore          = "sa_ignore"
 )
 
-// Annotation annotation structure | 注解结构体
+// Annotation structure | 注解结构体
 type Annotation struct {
 	CheckLogin      bool     `json:"checkLogin"`
 	CheckRole       []string `json:"checkRole"`
@@ -107,6 +107,10 @@ func GetHandler(handler interface{}, annotations ...*Annotation) ginfw.HandlerFu
 				"message": "未登录",
 			})
 			return
+		}
+		// 检查 token 是不是是以Bearer 开头，如果是则去除Bearer前缀
+		if strings.HasPrefix(token, "Bearer ") {
+			token = strings.TrimPrefix(token, "Bearer ")
 		}
 
 		// Check login | 检查登录
