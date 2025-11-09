@@ -61,14 +61,6 @@ func (r *RefreshTokenInfo) UnmarshalBinary(data []byte) error {
 	return json.Unmarshal(data, r)
 }
 
-func (r *RefreshTokenInfo) MarshalBinary() ([]byte, error) {
-	return json.Marshal(r)
-}
-
-func (r *RefreshTokenInfo) UnmarshalBinary(data []byte) error {
-	return json.Unmarshal(data, r)
-}
-
 // RefreshTokenManager Refresh token manager | 刷新令牌管理器
 type RefreshTokenManager struct {
 	storage    adapter.Storage
