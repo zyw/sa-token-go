@@ -108,10 +108,6 @@ func GetHandler(handler interface{}, annotations ...*Annotation) ginfw.HandlerFu
 			c.Abort()
 			return
 		}
-		// 检查 token 是不是是以Bearer 开头，如果是则去除Bearer前缀
-		if strings.HasPrefix(token, "Bearer ") {
-			token = strings.TrimPrefix(token, "Bearer ")
-		}
 
 		// Check login | 检查登录
 		if !stputil.IsLogin(token) {

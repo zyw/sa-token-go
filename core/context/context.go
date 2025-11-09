@@ -47,13 +47,15 @@ func (c *SaTokenContext) GetTokenValue() string {
 
 	// 1. 尝试从Header获取
 	if cfg.IsReadHeader {
-		// 从自定义 token 名称的 Header 获取
-		if token := strings.TrimSpace(c.ctx.GetHeader(cfg.TokenName)); token != "" {
-			return token
-		}
 
-		// 从 Authorization 头获取
-		if auth := c.ctx.GetHeader(authHeader); auth != "" {
+		// 从自定义 token 名称的 Header 获取
+		auth := strings.TrimSpace(c.ctx.GetHeader(cfg.TokenName))
+		if auth == "" {
+			// 从 Authorization 头获取
+			auth = c.ctx.GetHeader(authHeader)
+		}
+		// 尝试从 Bearer 获取 Token
+		if auth != "" {
 			if token := extractBearerToken(auth); token != "" {
 				return token
 			}
