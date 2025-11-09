@@ -9,6 +9,7 @@ import (
 
 	"github.com/click33/sa-token-go/core/adapter"
 	"github.com/click33/sa-token-go/core/config"
+	"github.com/click33/sa-token-go/core/manager"
 	"github.com/click33/sa-token-go/core/token"
 )
 
@@ -99,6 +100,12 @@ func (rtm *RefreshTokenManager) GenerateTokenPair(loginID, device string) (*Refr
 	accessToken, err := rtm.tokenGen.Generate(loginID, device)
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate access token: %w", err)
+	}
+
+	// Save token-loginID mapping (符合 Java sa-token 设计) | 保存 Token-LoginID 映射
+	tokenKey := rtm.getTokenKey(accessToken)
+	if err := rtm.storage.Set(tokenKey, loginID, rtm.accessTTL); err != nil {
+		return nil, fmt.Errorf("failed to save token: %w", err)
 	}
 
 	// Generate refresh token | 生成刷新令牌
@@ -209,4 +216,9 @@ func (rtm *RefreshTokenManager) IsValid(refreshToken string) bool {
 // getRefreshKey Gets storage key for refresh token | 获取刷新令牌的存储键
 func (rtm *RefreshTokenManager) getRefreshKey(refreshToken string) string {
 	return rtm.keyPrefix + RefreshKeySuffix + refreshToken
+}
+
+// getTokenKey Gets token storage key | 获取Token存储键
+func (rtm *RefreshTokenManager) getTokenKey(tokenValue string) string {
+	return rtm.keyPrefix + manager.TokenKeyPrefix + tokenValue
 }
