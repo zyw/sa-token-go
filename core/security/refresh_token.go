@@ -9,7 +9,6 @@ import (
 
 	"github.com/click33/sa-token-go/core/adapter"
 	"github.com/click33/sa-token-go/core/config"
-	"github.com/click33/sa-token-go/core/manager"
 	"github.com/click33/sa-token-go/core/token"
 )
 
@@ -64,17 +63,18 @@ func (r *RefreshTokenInfo) UnmarshalBinary(data []byte) error {
 
 // RefreshTokenManager Refresh token manager | 刷新令牌管理器
 type RefreshTokenManager struct {
-	storage    adapter.Storage
-	keyPrefix  string // Configurable prefix | 可配置的前缀
-	tokenGen   *token.Generator
-	refreshTTL time.Duration // Refresh token TTL (30 days) | 刷新令牌有效期（30天）
-	accessTTL  time.Duration // Access token TTL (configurable) | 访问令牌有效期（可配置）
+	storage        adapter.Storage
+	keyPrefix      string // Configurable prefix | 可配置的前缀
+	tokenKeyPrefix string // Token key prefix | 令牌键前缀
+	tokenGen       *token.Generator
+	refreshTTL     time.Duration // Refresh token TTL (30 days) | 刷新令牌有效期（30天）
+	accessTTL      time.Duration // Access token TTL (configurable) | 访问令牌有效期（可配置）
 }
 
 // NewRefreshTokenManager Creates a new refresh token manager | 创建新的刷新令牌管理器
 // prefix: key prefix (e.g., "satoken:" or "" for Java compatibility) | 键前缀（如："satoken:" 或 "" 兼容Java）
 // cfg: configuration, uses Timeout for access token TTL | 配置，使用Timeout作为访问令牌有效期
-func NewRefreshTokenManager(storage adapter.Storage, prefix string, cfg *config.Config) *RefreshTokenManager {
+func NewRefreshTokenManager(storage adapter.Storage, prefix, keyPrefix string, cfg *config.Config) *RefreshTokenManager {
 	accessTTL := time.Duration(cfg.Timeout) * time.Second
 
 	if accessTTL == 0 {
@@ -82,11 +82,12 @@ func NewRefreshTokenManager(storage adapter.Storage, prefix string, cfg *config.
 	}
 
 	return &RefreshTokenManager{
-		storage:    storage,
-		keyPrefix:  prefix,
-		tokenGen:   token.NewGenerator(cfg),
-		refreshTTL: DefaultRefreshTTL,
-		accessTTL:  accessTTL,
+		storage:        storage,
+		keyPrefix:      prefix,
+		tokenKeyPrefix: keyPrefix,
+		tokenGen:       token.NewGenerator(cfg),
+		refreshTTL:     DefaultRefreshTTL,
+		accessTTL:      accessTTL,
 	}
 }
 
@@ -220,5 +221,5 @@ func (rtm *RefreshTokenManager) getRefreshKey(refreshToken string) string {
 
 // getTokenKey Gets token storage key | 获取Token存储键
 func (rtm *RefreshTokenManager) getTokenKey(tokenValue string) string {
-	return rtm.keyPrefix + manager.TokenKeyPrefix + tokenValue
+	return rtm.keyPrefix + rtm.tokenKeyPrefix + tokenValue
 }

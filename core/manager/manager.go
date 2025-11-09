@@ -85,7 +85,7 @@ func NewManager(storage adapter.Storage, cfg *config.Config) *Manager {
 		generator:      token.NewGenerator(cfg),
 		prefix:         prefix,
 		nonceManager:   security.NewNonceManager(storage, prefix, DefaultNonceTTL),
-		refreshManager: security.NewRefreshTokenManager(storage, prefix, cfg),
+		refreshManager: security.NewRefreshTokenManager(storage, prefix, TokenKeyPrefix, cfg),
 		oauth2Server:   oauth2.NewOAuth2Server(storage, prefix),
 		eventManager:   listener.NewManager(),
 	}
