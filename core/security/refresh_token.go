@@ -153,7 +153,7 @@ func (rtm *RefreshTokenManager) RefreshAccessToken(refreshToken string) (*Refres
 		return nil, ErrInvalidRefreshData
 	}
 
-	var oldInfo *RefreshTokenInfo
+	oldInfo := &RefreshTokenInfo{}
 	err = oldInfo.UnmarshalBinary(dataBytes)
 	if err != nil {
 		return nil, ErrInvalidRefreshData
@@ -208,7 +208,7 @@ func (rtm *RefreshTokenManager) GetRefreshTokenInfo(refreshToken string) (*Refre
 		return nil, ErrInvalidRefreshData
 	}
 
-	var info *RefreshTokenInfo
+	info := &RefreshTokenInfo{}
 	err = info.UnmarshalBinary(dataBytes)
 	if err != nil {
 		return nil, ErrInvalidRefreshData
