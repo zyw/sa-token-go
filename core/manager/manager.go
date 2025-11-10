@@ -750,6 +750,11 @@ func (m *Manager) GetStorage() adapter.Storage {
 	return m.storage
 }
 
+// GetGenerator Gets token generator | 获取Token生成器
+func (m *Manager) GetGenerator() *token.Generator {
+	return m.generator
+}
+
 // ============ Security Features | 安全特性 ============
 
 // GenerateNonce Generates a one-time nonce | 生成一次性随机数

@@ -83,6 +83,12 @@ func (c *SaTokenContext) IsLogin() bool {
 	return c.manager.IsLogin(token)
 }
 
+// ValidateJwtToken 验证JWT Token是否有效
+func (c *SaTokenContext) ValidateJwtToken() error {
+	token := c.GetTokenValue()
+	return c.manager.GetGenerator().ValidateJWT(token)
+}
+
 // CheckLogin 检查登录（未登录抛出错误）
 func (c *SaTokenContext) CheckLogin() error {
 	token := c.GetTokenValue()

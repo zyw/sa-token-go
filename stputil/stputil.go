@@ -431,3 +431,15 @@ func GetRoleList(tokenValue string) ([]string, error) {
 func GetTokenSession(tokenValue string) (*session.Session, error) {
 	return GetSessionByToken(tokenValue)
 }
+
+// ============ 验证JWT令牌 | Validate JWT Token ============
+
+// ValidateJwtToken 验证JWT令牌
+func ValidateJwtToken(tokenValue string) error {
+	// 验证JWT令牌 | Validate JWT Token
+	err := globalManager.GetGenerator().ValidateJWT(tokenValue)
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -26,6 +26,15 @@ func (p *Plugin) AuthMiddleware() gin.HandlerFunc {
 		ctx := NewGinContext(c)
 		saCtx := core.NewContext(ctx, p.manager)
 
+		// 如果token 是jwt，先验证jwt是否有效
+		if p.manager.GetConfig().TokenStyle == core.TokenStyleJWT {
+			if err := saCtx.ValidateJwtToken(); err != nil {
+				writeErrorResponse(c, err)
+				c.Abort()
+				return
+			}
+		}
+
 		// Check login | 检查登录
 		if err := saCtx.CheckLogin(); err != nil {
 			writeErrorResponse(c, err)
