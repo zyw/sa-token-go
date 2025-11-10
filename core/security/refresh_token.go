@@ -147,8 +147,9 @@ func (rtm *RefreshTokenManager) RefreshAccessToken(refreshToken string) (*Refres
 		return nil, ErrInvalidRefreshToken
 	}
 
-	oldInfo, ok := data.(*RefreshTokenInfo)
-	if !ok {
+	var oldInfo *RefreshTokenInfo
+	err = oldInfo.UnmarshalBinary(data.([]byte))
+	if err != nil {
 		return nil, ErrInvalidRefreshData
 	}
 
