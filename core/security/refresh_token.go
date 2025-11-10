@@ -10,6 +10,7 @@ import (
 	"github.com/click33/sa-token-go/core/adapter"
 	"github.com/click33/sa-token-go/core/config"
 	"github.com/click33/sa-token-go/core/token"
+	"github.com/click33/sa-token-go/core/utils"
 )
 
 // Refresh Token Implementation
@@ -147,8 +148,13 @@ func (rtm *RefreshTokenManager) RefreshAccessToken(refreshToken string) (*Refres
 		return nil, ErrInvalidRefreshToken
 	}
 
+	dataBytes, err := utils.ToBytes(data)
+	if err != nil {
+		return nil, ErrInvalidRefreshData
+	}
+
 	var oldInfo *RefreshTokenInfo
-	err = oldInfo.UnmarshalBinary(data.([]byte))
+	err = oldInfo.UnmarshalBinary(dataBytes)
 	if err != nil {
 		return nil, ErrInvalidRefreshData
 	}
@@ -197,8 +203,13 @@ func (rtm *RefreshTokenManager) GetRefreshTokenInfo(refreshToken string) (*Refre
 		return nil, ErrInvalidRefreshToken
 	}
 
+	dataBytes, err := utils.ToBytes(data)
+	if err != nil {
+		return nil, ErrInvalidRefreshData
+	}
+
 	var info *RefreshTokenInfo
-	err = info.UnmarshalBinary(data.([]byte))
+	err = info.UnmarshalBinary(dataBytes)
 	if err != nil {
 		return nil, ErrInvalidRefreshData
 	}
