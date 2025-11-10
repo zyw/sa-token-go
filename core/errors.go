@@ -3,6 +3,9 @@ package core
 import (
 	"errors"
 	"fmt"
+
+	"github.com/click33/sa-token-go/core/token"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // Common error definitions for better error handling and internationalization support
@@ -14,11 +17,20 @@ var (
 	// ErrNotLogin indicates the user is not logged in | 用户未登录错误
 	ErrNotLogin = fmt.Errorf("authentication required: user not logged in")
 
+	// ErrTokenEmpty indicates the token string is empty | Token字符串为空
+	ErrTokenEmpty = fmt.Errorf("token string is empty")
+
 	// ErrTokenInvalid indicates the provided token is invalid or malformed | Token无效或格式错误
 	ErrTokenInvalid = fmt.Errorf("invalid token: the token is malformed or corrupted")
 
 	// ErrTokenExpired indicates the token has expired | Token已过期
 	ErrTokenExpired = fmt.Errorf("token expired: please login again to get a new token")
+
+	// ErrTokenSignatureInvalid indicates the token signature is invalid | Token签名无效
+	ErrTokenSignatureInvalid = fmt.Errorf("token signature invalid: the token signature does not match")
+
+	// ErrTokenNotValidYet indicates the token is not valid yet | Token未生效
+	ErrTokenNotValidYet = fmt.Errorf("token not valid yet: the token is not active yet")
 
 	// ErrInvalidLoginID indicates the login ID is invalid | 登录ID无效
 	ErrInvalidLoginID = fmt.Errorf("invalid login ID: the login identifier cannot be empty")
@@ -185,6 +197,26 @@ func IsAccountDisabledError(err error) bool {
 // IsTokenError Checks if error is a token-related error | 检查是否为Token相关错误
 func IsTokenError(err error) bool {
 	return errors.Is(err, ErrTokenInvalid) || errors.Is(err, ErrTokenExpired)
+}
+
+// JwtTokenError Translates JWT errors to SaTokenError | 将JWT错误转换为SaTokenError
+func JwtTokenError(err error) error {
+	switch {
+	case errors.Is(err, jwt.ErrTokenExpired):
+		return ErrTokenExpired
+	case errors.Is(err, jwt.ErrTokenMalformed):
+		return ErrTokenInvalid
+	case errors.Is(err, jwt.ErrTokenSignatureInvalid):
+		return ErrTokenSignatureInvalid
+	case errors.Is(err, jwt.ErrTokenNotValidYet):
+		return ErrTokenNotValidYet
+	case errors.Is(err, token.ErrTokenEmpty):
+		return ErrTokenEmpty
+	case errors.Is(err, token.ErrInvalidToken):
+		return ErrTokenInvalid
+	default:
+		return ErrTokenInvalid
+	}
 }
 
 // GetErrorCode Extracts error code from SaTokenError | 从SaTokenError中提取错误码

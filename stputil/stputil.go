@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/click33/sa-token-go/core"
 	"github.com/click33/sa-token-go/core/manager"
 	"github.com/click33/sa-token-go/core/oauth2"
 	"github.com/click33/sa-token-go/core/security"
@@ -439,7 +440,7 @@ func ValidateJwtToken(tokenValue string) error {
 	// 验证JWT令牌 | Validate JWT Token
 	err := globalManager.GetGenerator().ValidateJWT(tokenValue)
 	if err != nil {
-		return err
+		return core.JwtTokenError(err)
 	}
 	return nil
 }

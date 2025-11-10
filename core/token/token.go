@@ -26,6 +26,7 @@ const (
 
 // Error variables | 错误变量
 var (
+	ErrTokenEmpty              = fmt.Errorf("token string cannot be empty")
 	ErrInvalidToken            = fmt.Errorf("invalid token")
 	ErrUnexpectedSigningMethod = fmt.Errorf("unexpected signing method")
 )
@@ -139,7 +140,7 @@ func (g *Generator) getJWTSecret() string {
 // ParseJWT Parses JWT token and returns claims | 解析JWT Token并返回声明
 func (g *Generator) ParseJWT(tokenStr string) (jwt.MapClaims, error) {
 	if tokenStr == "" {
-		return nil, fmt.Errorf("token string cannot be empty")
+		return nil, ErrTokenEmpty
 	}
 
 	secretKey := g.getJWTSecret()
@@ -153,7 +154,7 @@ func (g *Generator) ParseJWT(tokenStr string) (jwt.MapClaims, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse JWT: %w", err)
+		return nil, err
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
